@@ -81,10 +81,10 @@ POST /auth/register
 
 ```json
 {
-  "nome": "Pedro",
-  "email": "pedro@email.com",
+  "nome": "João",
+  "email": "joao@email.com",
   "senha": "123456",
-  "role": "vendedor"
+  "role": "cliente" // cliente | vendedor | admin
 }
 ```
 
@@ -94,7 +94,7 @@ POST /auth/login
 
 ```json
 {
-  "email": "pedro@email.com",
+  "email": "joao@email.com",
   "senha": "123456"
 }
 ```
