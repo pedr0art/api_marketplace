@@ -54,23 +54,22 @@ res.status(500).json({ erro: 'Erro interno' });
 
 
 exports.remove = async (req, res) => {
-const { id } = req.params;
+  const { id } = req.params;
 
+  try {
+    const produto = await Product.findById(id);
+    if (!produto) return res.status(404).json({ erro: 'Produto não encontrado' });
 
-try {
-const produto = await Product.findById(id);
-if (!produto) return res.status(404).json({ erro: 'Produto não encontrado' });
+    // apenas o vendedor que criou ou admin pode deletar
+    if (produto.vendedor.toString() !== req.user.id && req.user.role !== 'admin') {
+      return res.status(403).json({ erro: 'Acesso negado' });
+    }
 
+    await produto.deleteOne(); // ⬅️ CORREÇÃO AQUI
 
-if (produto.vendedor.toString() !== req.user.id && req.user.role !== 'admin') {
-return res.status(403).json({ erro: 'Acesso negado' });
-}
-
-
-await produto.remove();
-res.json({ mensagem: 'Produto removido' });
-} catch (err) {
-console.error(err);
-res.status(500).json({ erro: 'Erro interno' });
-}
+    res.json({ mensagem: 'Produto removido' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ erro: 'Erro interno' });
+  }
 };

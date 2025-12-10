@@ -1,294 +1,184 @@
-# **Marketplace API – Node.js + Express + MongoDB**
-
-API REST desenvolvida em Node.js para um sistema de marketplace simples, com gerenciamento de **produtos**, **usuários** e **pedidos**.
-Inclui CRUD completo, testes automatizados e suporte para deploy em plataformas como **Render**, **Vercel** ou **Railway**.
+Aqui está o README em formato **pronto para colar no VS Code**, sem comentários adicionais:
 
 ---
 
-# **Tecnologias Utilizadas**
+# API Marketplace – Documentação
+
+## Descrição
+
+Esta API oferece funcionalidades completas para gerenciamento de usuários, produtos e pedidos, incluindo autenticação com JWT, permissões de acesso e integração com MongoDB via Mongoose.
+
+---
+
+## Funcionalidades Principais
+
+* Cadastro e login de usuários (JWT)
+* CRUD completo de produtos
+* Permissões (vendedor/admin podem criar, editar e deletar produtos)
+* Pedidos com itens, total e status
+* Relacionamento entre usuários, produtos e pedidos
+* Middleware de autenticação
+* Banco de dados MongoDB usando Mongoose
+* Documentação clara para testes no Postman ou Insomnia
+
+---
+
+## Tecnologias Utilizadas
 
 * Node.js
 * Express
 * MongoDB + Mongoose
-* Jest + Supertest (testes)
+* JWT (JSON Web Token)
+* Bcrypt
 * Dotenv
-* Nodemon (desenvolvimento)
 
+---
 
-# **Estrutura do Projeto**
+## Instalação
 
-marketplace-api/
-│
-├─ src/
-│  ├─ config/
-│  │   └─ database.js
-│  ├─ controllers/
-│  ├─ models/
-│  ├─ routes/
-│  └─ app.js
-│
-├─ tests/
-│
-├─ server.js
-├─ package.json
-└─ .env
+### Instalar dependências
 
-
-
-# **Instalação e Configuração**
-
-## Clonar o repositório
-
-
-git clone https://github.com/SEU_USUARIO/marketplace-api.git
-cd marketplace-api
-
-
-## Instalar dependências
-
-```bash
+```
 npm install
 ```
 
-## Criar arquivo `.env`
-
-Crie um arquivo `.env` na raiz com:
+### Criar arquivo `.env`
 
 ```
-MONGO_URI=mongodb+srv://SEU_BANCO
 PORT=3000
+MONGO_URI=mongodb+srv://pedroart:EiEkEY1GALLW0Uva@apimarketplace.xlxj2ii.mongodb.net/?appName=apimarketplace
+JWT_SECRET=f1b9a8c32d9929d95c9af8bc2a71c6e23e09fe08ad62b0f87f7b9e148ab7cbd1
 ```
 
-## Rodar em desenvolvimento
-
-```bash
-npm run dev
-```
-
-Servidor iniciará em:
+### Iniciar o servidor
 
 ```
-http://localhost:3000
+npm start
+```
+
+O servidor deverá exibir:
+
+* Servidor rodando na porta 3000
+* MongoDB conectado
+
+---
+
+## Rotas da API
+
+Base URL:
+
+```
+http://localhost:3000/
 ```
 
 ---
 
-# 🧪 **Rodar Testes**
+# Autenticação (AUTH)
 
-Os testes usam `supertest` + `jest`.
+### Registrar usuário
 
-```bash
-npm test
-```
-
----
-
-# 🌐 **Rotas da API**
-
-A seguir, todas as rotas com exemplos de requisições (formato Thunder Client / Postman / cURL).
-
----
-
-# 🛍️ **1. Produtos**
-
-## ➕ **Criar Produto**
-
-**POST /products**
-
-### Corpo:
+POST /auth/register
 
 ```json
 {
-  "name": "Notebook Gamer",
-  "description": "RTX 3060, 16GB RAM",
-  "price": 6500,
-  "category": "Electronics",
-  "stock": 10
-}
-```
-
-### Resposta:
-
-```json
-{
-  "_id": "...",
-  "name": "Notebook Gamer",
-  "price": 6500
-}
-```
-
----
-
-## 📄 **Listar Produtos**
-
-**GET /products**
-
-Retorna todos os produtos.
-
----
-
-## 🔍 **Buscar Produto por ID**
-
-**GET /products/:id**
-
----
-
-## ✏️ **Atualizar Produto**
-
-**PUT /products/:id**
-
-### Exemplo:
-
-```json
-{
-  "price": 5999,
-  "stock": 4
-}
-```
-
----
-
-## 🗑️ **Excluir Produto**
-
-**DELETE /products/:id**
-
----
-
-# 👤 **2. Usuários**
-
-## ➕ **Criar Usuário**
-
-**POST /users**
-
-### Corpo:
-
-```json
-{
-  "name": "Pedro",
+  "nome": "Pedro",
   "email": "pedro@email.com",
-  "address": "Rua XPTO, 123"
+  "senha": "123456",
+  "role": "vendedor"
 }
 ```
 
----
+### Login
 
-## 📄 **Listar Usuários**
-
-**GET /users**
-
----
-
-## 🔍 **Buscar Usuário por ID**
-
-**GET /users/:id**
-
----
-
-## ✏️ **Atualizar Usuário**
-
-**PUT /users/:id**
-
----
-
-## 🗑️ **Excluir Usuário**
-
-**DELETE /users/:id**
-
----
-
-# 🛒 **3. Pedidos**
-
-## ➕ **Criar Pedido**
-
-**POST /orders**
-
-### Corpo:
+POST /auth/login
 
 ```json
 {
-  "user": "id_do_usuario",
-  "items": [
-    {
-      "product": "id_do_produto",
-      "quantity": 2
-    }
-  ],
-  "status": "pending"
+  "email": "pedro@email.com",
+  "senha": "123456"
 }
 ```
 
----
-
-## 📄 **Listar Pedidos**
-
-**GET /orders**
-
----
-
-## 🔍 **Buscar Pedido por ID**
-
-**GET /orders/:id**
-
----
-
-## ✏️ **Atualizar Pedido**
-
-**PUT /orders/:id**
-
-### Exemplo:
+Retorno:
 
 ```json
 {
-  "status": "paid"
+  "token": "jwt.token.aqui"
 }
+```
+
+### Enviar token nas rotas protegidas
+
+```
+Authorization: Bearer SEU_TOKEN_AQUI
 ```
 
 ---
 
-## 🗑️ **Excluir Pedido**
+# Produtos (Products)
 
-**DELETE /orders/:id**
+### Listar produtos
+
+GET /products
+
+### Criar produto
+
+POST /products
+
+```json
+{
+  "nome": "Notebook Gamer",
+  "descricao": "RTX 4060, i7",
+  "preco": 5999.90,
+  "estoque": 10
+}
+```
+
+### Atualizar produto
+
+PUT /products/:id
+
+### Remover produto
+
+DELETE /products/:id
+
+Regras: somente o vendedor criador ou um admin pode editar/remover.
 
 ---
 
-# 🗄️ **Modelos do MongoDB**
+# Pedidos (Orders)
 
-### **Product**
+### Criar pedido
 
-```js
+POST /orders
+
+```json
 {
-  name: String,
-  description: String,
-  price: Number,
-  category: String,
-  stock: Number
-}
-```
-
-### **User**
-
-```js
-{
-  name: String,
-  email: String,
-  address: String
-}
-```
-
-### **Order**
-
-```js
-{
-  user: ObjectId,
-  items: [
+  "usuario": "ID_DO_USUARIO",
+  "itens": [
     {
-      product: ObjectId,
-      quantity: Number
+      "produto": "ID_DO_PRODUTO",
+      "quantidade": 2
     }
   ],
-  status: String,
-  total: Number
+  "total": 259.80
 }
 ```
+
+### Listar pedidos
+
+GET /orders
+
+### Buscar pedido por ID
+
+GET /orders/:id
+
+### Atualizar pedido
+
+PUT /orders/:id
+
+### Remover pedido
+
+DELETE /orders/:id
 
 
