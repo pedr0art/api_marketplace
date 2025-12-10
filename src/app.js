@@ -1,20 +1,25 @@
-// src/app.js
 const express = require('express');
-const app = express();
-const productRoutes = require('./routes/productRoutes');
+const cors = require('cors');
+
+const authRoutes = require('./routes/authRoutes');
 const userRoutes = require('./routes/userRoutes');
+const productRoutes = require('./routes/productRoutes');
 const orderRoutes = require('./routes/orderRoutes');
 
-// Middleware para trabalhar com JSON
+const app = express();
+
+app.use(cors());
 app.use(express.json());
 
-// Rotas
-app.use('/products', productRoutes);
+// Montando as rotas:
+app.use('/auth', authRoutes);
 app.use('/users', userRoutes);
+app.use('/products', productRoutes);
 app.use('/orders', orderRoutes);
 
+// Rota de teste
 app.get('/', (req, res) => {
-    res.send('API Marketplace funcionando! 🚀');
+    res.send('API funcionando!');
 });
 
 module.exports = app;
