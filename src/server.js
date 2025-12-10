@@ -11,7 +11,7 @@ const DB_URI = process.env.NODE_ENV === "test"
     ? process.env.MONGO_URI_TEST
     : process.env.MONGO_URI;
 
-// Conectar ao banco correto pipipipopop
+// Conectar ao banco correto 
 connectDB(DB_URI);
 
 let server;
