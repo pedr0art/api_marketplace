@@ -1,47 +1,55 @@
-const Order = require('../models/Order');
-const Product = require('../models/Product');
+const Order = require('../models/Order.js');
 
+module.exports = {
+    async create(req, res) {
+        try {
+            const order = await Order.create(req.body);
+            res.status(201).json(order);
+        } catch (error) {
+            res.status(400).json({ error: error.message });
+        }
+    },
 
-exports.create = async (req, res) => {
-const { itens } = req.body; // itens: [{ produto: id, quantidade }]
-if (!Array.isArray(itens) || itens.length === 0) return res.status(400).json({ erro: 'Itens do pedido inválidos' });
+    async list(req, res) {
+        try {
+            const orders = await Order.find();
+            res.json(orders);
+        } catch (error) {
+            res.status(500).json({ error: error.message });
+        }
+    },
 
+    async getById(req, res) {
+        try {
+            const order = await Order.findById(req.params.id);
+            if (!order) return res.status(404).json({ error: 'Pedido não encontrado' });
+            res.json(order);
+        } catch (error) {
+            res.status(500).json({ error: error.message });
+        }
+    },
 
-try {
-// calcular total e checar estoque
-let total = 0;
-for (const item of itens) {
-const p = await Product.findById(item.produto);
-if (!p) return res.status(400).json({ erro: `Produto ${item.produto} não encontrado` });
-if (p.estoque < item.quantidade) return res.status(400).json({ erro: `Estoque insuficiente para ${p.nome}` });
-total += p.preco * item.quantidade;
-}
+    async update(req, res) {
+        try {
+            const order = await Order.findByIdAndUpdate(
+                req.params.id,
+                req.body,
+                { new: true }
+            );
+            if (!order) return res.status(404).json({ error: 'Pedido não encontrado' });
+            res.json(order);
+        } catch (error) {
+            res.status(400).json({ error: error.message });
+        }
+    },
 
-
-const order = new Order({ usuario: req.user.id, itens, total });
-await order.save();
-
-
-// decrementar estoque (simples)
-for (const item of itens) {
-await Product.findByIdAndUpdate(item.produto, { $inc: { estoque: -item.quantidade } });
-}
-
-
-res.status(201).json(order);
-} catch (err) {
-console.error(err);
-res.status(500).json({ erro: 'Erro interno' });
-}
-};
-
-
-exports.listMy = async (req, res) => {
-try {
-const orders = await Order.find({ usuario: req.user.id }).populate('itens.produto');
-res.json(orders);
-} catch (err) {
-console.error(err);
-res.status(500).json({ erro: 'Erro interno' });
-}
+    async remove(req, res) {
+        try {
+            const order = await Order.findByIdAndDelete(req.params.id);
+            if (!order) return res.status(404).json({ error: 'Pedido não encontrado' });
+            res.json({ message: 'Pedido removido' });
+        } catch (error) {
+            res.status(500).json({ error: error.message });
+        }
+    }
 };
