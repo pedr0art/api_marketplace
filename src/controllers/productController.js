@@ -27,7 +27,7 @@ const produto = new Product({
     distribuidor: distribuidorId 
 });
 await produto.save();
-
+//test
 // Retorna o produto com o distribuidor populado
 const produtoCriado = await Product.findById(produto._id)
     .populate('vendedor', 'nome email')
