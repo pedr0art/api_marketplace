@@ -1,29 +1,38 @@
 // src/tests/product.test.js
 const request = require("supertest");
 const app = require("../app");
+const User = require("../models/User");
 
 describe("Produtos", () => {
   let token;
   let productId;
+  const email = `admin${Date.now()}@email.com`;
 
   beforeAll(async () => {
-    const resUser = await request(app)
+    await request(app)
       .post("/users/register")
       .send({
         nome: "Admin",
-        email: `admin${Date.now()}@email.com`,
+        email,
         senha: "123456"
       });
+
+    // 🔥 PROMOVE PARA ADMIN DIRETO NO BANCO
+    await User.updateOne(
+      { email },
+      { $set: { role: "admin" } }
+    );
 
     const resLogin = await request(app)
       .post("/auth/login")
       .send({
-        email: resUser.body.email ?? `admin${Date.now()}@email.com`,
+        email,
         senha: "123456"
       });
 
     token = resLogin.body.token;
   });
+
 
   it("Deve criar um produto", async () => {
     const res = await request(app)
@@ -40,7 +49,6 @@ describe("Produtos", () => {
     expect(res.body).toHaveProperty("_id");
 
     productId = res.body._id;
-    global.productId = productId;
   });
 
   it("Deve listar produtos", async () => {

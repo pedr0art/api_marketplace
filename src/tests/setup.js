@@ -1,13 +1,20 @@
-// src/tests/setup.js
+require("dotenv").config({ path: ".env.test" });
+
 const mongoose = require("mongoose");
 const connectDB = require("../config/db");
 
 beforeAll(async () => {
-  process.env.NODE_ENV = "test";
-  await connectDB();
+  await connectDB(process.env.MONGO_URI_TEST);
+});
+
+afterEach(async () => {
+  const collections = mongoose.connection.collections;
+
+  for (const key in collections) {
+    await collections[key].deleteMany({});
+  }
 });
 
 afterAll(async () => {
-  await mongoose.connection.dropDatabase();
   await mongoose.connection.close();
 });

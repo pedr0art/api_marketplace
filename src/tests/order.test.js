@@ -3,36 +3,51 @@ const request = require("supertest");
 const app = require("../app");
 
 describe("Pedidos", () => {
-  let token;
-  let userId;
+  let tokenCliente;
+  let tokenAdmin;
   let productId;
 
+  const emailCliente = `cliente${Date.now()}@mail.com`;
+  const emailAdmin = `admin${Date.now()}@mail.com`;
+
   beforeAll(async () => {
-    // Criar usuário
-    const resUser = await request(app)
-      .post("/users/register")
-      .send({
-        nome: "Cliente Pedido",
-        email: `cliente${Date.now()}@mail.com`,
-        senha: "123456"
-      });
+    // 🔹 Criar cliente
+    await request(app).post("/users/register").send({
+      nome: "Cliente Pedido",
+      email: emailCliente,
+      senha: "123456"
+    });
 
-    userId = resUser.body.id;
-
-    // Login
-    const resLogin = await request(app)
+    const resLoginCliente = await request(app)
       .post("/auth/login")
       .send({
-        email: `cliente${Date.now()}@mail.com`,
+        email: emailCliente,
         senha: "123456"
       });
 
-    token = resLogin.body.token;
+    tokenCliente = resLoginCliente.body.token;
 
-    // Criar produto
+    // 🔹 Criar admin
+    await request(app).post("/users/register").send({
+      nome: "Admin Pedido",
+      email: emailAdmin,
+      senha: "123456",
+      role: "admin"
+    });
+
+    const resLoginAdmin = await request(app)
+      .post("/auth/login")
+      .send({
+        email: emailAdmin,
+        senha: "123456"
+      });
+
+    tokenAdmin = resLoginAdmin.body.token;
+
+    // 🔹 Criar produto (COM ADMIN)
     const resProd = await request(app)
       .post("/products")
-      .set("Authorization", `Bearer ${token}`)
+      .set("Authorization", `Bearer ${tokenAdmin}`)
       .send({
         nome: "Produto Pedido",
         preco: 50,
@@ -45,19 +60,18 @@ describe("Pedidos", () => {
   it("Deve criar um pedido", async () => {
     const res = await request(app)
       .post("/orders")
-      .set("Authorization", `Bearer ${token}`)
+      .set("Authorization", `Bearer ${tokenCliente}`)
       .send({
-        usuario: userId,
         itens: [
           {
             produto: productId,
             quantidade: 2
           }
-        ],
-        total: 100
+        ]
       });
 
     expect(res.status).toBe(201);
     expect(res.body).toHaveProperty("_id");
   });
+
 });
