@@ -1,184 +1,275 @@
-Aqui está o README em formato **pronto para colar no VS Code**, sem comentários adicionais:
+API Marketplace – Documentação
+Descrição
 
----
+Esta API oferece funcionalidades completas para gerenciamento de usuários, produtos, pedidos e distribuidores, incluindo autenticação com JWT, controle de permissões e integração com MongoDB via Mongoose.
 
-# API Marketplace – Documentação
+Funcionalidades Principais
 
-## Descrição
+Cadastro e login de usuários (JWT)
 
-Esta API oferece funcionalidades completas para gerenciamento de usuários, produtos e pedidos, incluindo autenticação com JWT, permissões de acesso e integração com MongoDB via Mongoose.
+CRUD completo de produtos
 
----
+Controle de permissões por papel (cliente, vendedor, admin)
 
-## Funcionalidades Principais
+Criação e gerenciamento de pedidos
 
-* Cadastro e login de usuários (JWT)
-* CRUD completo de produtos
-* Permissões (vendedor/admin podem criar, editar e deletar produtos)
-* Pedidos com itens, total e status
-* Relacionamento entre usuários, produtos e pedidos
-* Middleware de autenticação
-* Banco de dados MongoDB usando Mongoose
-* Documentação clara para testes no Postman ou Insomnia
+Cadastro e controle de distribuidores
 
----
+Filtros e status de distribuidores
 
-## Tecnologias Utilizadas
+Middleware de autenticação
 
-* Node.js
-* Express
-* MongoDB + Mongoose
-* JWT (JSON Web Token)
-* Bcrypt
-* Dotenv
+Banco de dados MongoDB utilizando Mongoose
 
----
+Testes automatizados com Jest e Supertest
 
-## Instalação
+Documentação pronta para Postman ou Insomnia
 
-### Instalar dependências
+Tecnologias Utilizadas
 
-```
+Node.js
+
+Express
+
+MongoDB + Mongoose
+
+JWT (JSON Web Token)
+
+Bcrypt
+
+Dotenv
+
+Jest
+
+Supertest
+
+Instalação
+Instalar dependências
 npm install
-```
 
-### Criar arquivo `.env`
-
-```
+Criar arquivo .env
 PORT=3000
-MONGO_URI=mongodb+srv://pedroart:EiEkEY1GALLW0Uva@apimarketplace.xlxj2ii.mongodb.net/?appName=apimarketplace
-JWT_SECRET=f1b9a8c32d9929d95c9af8bc2a71c6e23e09fe08ad62b0f87f7b9e148ab7cbd1
-```
+MONGO_URI=mongodb+srv://SEU_USUARIO:SUA_SENHA@SEU_CLUSTER.mongodb.net/?appName=apimarketplace
+JWT_SECRET=sua_chave_secreta_jwt
 
-### Iniciar o servidor
+Criar arquivo .env.test
+MONGO_URI_TEST=mongodb+srv://SEU_USUARIO:SUA_SENHA@SEU_CLUSTER.mongodb.net/apimarketplace_test
+JWT_SECRET=sua_chave_secreta_jwt
 
-```
+Iniciar o servidor
 npm start
-```
 
-O servidor deverá exibir:
 
-* Servidor rodando na porta 3000
-* MongoDB conectado
+Saída esperada:
 
----
+Servidor rodando na porta 3000
 
-## Rotas da API
+MongoDB conectado
+
+Executar testes automatizados
+npm test
+
+
+Os testes utilizam:
+
+Banco isolado de testes
+
+Criação automática de usuários, produtos, pedidos e distribuidores
+
+Rotas da API
 
 Base URL:
 
-```
-http://localhost:3000/
-```
+http://localhost:3000
 
----
+Autenticação (AUTH)
+Registrar usuário
 
-# Autenticação (AUTH)
+POST /users/register
 
-### Registrar usuário
-
-POST /auth/register
-
-```json
 {
   "nome": "João",
   "email": "joao@email.com",
   "senha": "123456",
-  "role": "cliente" // cliente | vendedor | admin
+  "role": "cliente"
 }
-```
 
-### Login
+
+Roles disponíveis:
+
+cliente
+
+vendedor
+
+admin
+
+Login
 
 POST /auth/login
 
-```json
 {
   "email": "joao@email.com",
   "senha": "123456"
 }
-```
 
-Retorno:
 
-```json
+Resposta:
+
 {
   "token": "jwt.token.aqui"
 }
-```
 
-### Enviar token nas rotas protegidas
-
-```
+Enviar token nas rotas protegidas
 Authorization: Bearer SEU_TOKEN_AQUI
-```
 
----
-
-# Produtos (Products)
-
-### Listar produtos
+Produtos (Products)
+Listar produtos
 
 GET /products
 
-### Criar produto
+Criar produto
 
 POST /products
+Requer autenticação (vendedor ou admin)
 
-```json
 {
   "nome": "Notebook Gamer",
   "descricao": "RTX 4060, i7",
   "preco": 5999.90,
   "estoque": 10
 }
-```
 
-### Atualizar produto
+Atualizar produto
 
 PUT /products/:id
+Apenas o criador do produto ou admin
 
-### Remover produto
+Remover produto
 
 DELETE /products/:id
+Apenas o criador do produto ou admin
 
-Regras: somente o vendedor criador ou um admin pode editar/remover.
-
----
-
-# Pedidos (Orders)
-
-### Criar pedido
+Pedidos (Orders)
+Criar pedido
 
 POST /orders
+Requer autenticação
 
-```json
 {
-  "usuario": "ID_DO_USUARIO",
-  "itens": [
+  "items": [
     {
-      "produto": "ID_DO_PRODUTO",
+      "product": "ID_DO_PRODUTO",
       "quantidade": 2
     }
-  ],
-  "total": 259.80
+  ]
 }
-```
 
-### Listar pedidos
+Listar pedidos
 
 GET /orders
 
-### Buscar pedido por ID
+Buscar pedido por ID
 
 GET /orders/:id
 
-### Atualizar pedido
+Atualizar pedido
 
 PUT /orders/:id
 
-### Remover pedido
+Remover pedido
 
 DELETE /orders/:id
 
+Distribuidores (Distributors)
 
+Distribuidores representam empresas fornecedoras cadastradas no sistema.
+
+Estrutura do Distribuidor
+{
+  "razaoSocial": "Distribuidora Exemplo LTDA",
+  "nomeFantasia": "Distribuidora Exemplo",
+  "cnpj": "12345678000199",
+  "email": "contato@distribuidora.com",
+  "telefone": "(11) 99999-9999",
+  "endereco": {
+    "logradouro": "Rua das Flores",
+    "numero": "123",
+    "complemento": "Sala 5",
+    "bairro": "Centro",
+    "cidade": "São Paulo",
+    "estado": "SP",
+    "cep": "01000-000"
+  },
+  "responsavel": "Maria Silva"
+}
+
+Listar distribuidores públicos (ativos)
+
+GET /distributors/public
+
+Cadastrar distribuidor
+
+POST /distributors
+Requer autenticação
+
+{
+  "razaoSocial": "Distribuidora Exemplo LTDA",
+  "nomeFantasia": "Distribuidora Exemplo",
+  "cnpj": "12.345.678/0001-99",
+  "email": "contato@distribuidora.com",
+  "telefone": "(11) 99999-9999",
+  "endereco": {
+    "logradouro": "Rua A",
+    "numero": "100",
+    "bairro": "Centro",
+    "cidade": "São Paulo",
+    "estado": "SP",
+    "cep": "01000-000"
+  },
+  "responsavel": "Maria Silva"
+}
+
+Listar distribuidores (com filtros)
+
+GET /distributors
+
+Parâmetros opcionais:
+
+ativo=true|false
+
+cidade=São Paulo
+
+estado=SP
+
+Buscar distribuidor por ID
+
+GET /distributors/:id
+
+Buscar distribuidor por CNPJ
+
+GET /distributors/cnpj/:cnpj
+
+Atualizar distribuidor
+
+PUT /distributors/:id
+Apenas admin ou quem cadastrou
+
+Ativar / Desativar distribuidor
+
+PATCH /distributors/:id/status
+Apenas admin ou quem cadastrou
+
+Remover distribuidor
+
+DELETE /distributors/:id
+Apenas admin
+
+Observações Finais
+
+Tokens JWT são obrigatórios para rotas protegidas
+
+CNPJ é validado automaticamente
+
+Banco de testes é limpo após execução dos testes
+
+Projeto preparado para expansão futura
