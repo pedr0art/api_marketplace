@@ -1,160 +1,202 @@
-API Marketplace – Documentação
-Descrição
+# API Marketplace – Documentação
+
+## Descrição
 
 Esta API oferece funcionalidades completas para gerenciamento de usuários, produtos, pedidos e distribuidores, incluindo autenticação com JWT, controle de permissões e integração com MongoDB via Mongoose.
 
-Funcionalidades Principais
+---
 
-Cadastro e login de usuários (JWT)
+## Funcionalidades Principais
 
-CRUD completo de produtos
+* Cadastro e login de usuários (JWT)
+* CRUD completo de produtos
+* Controle de permissões por papel (cliente, vendedor, admin)
+* Criação e gerenciamento de pedidos
+* Cadastro e controle de distribuidores
+* Filtros e status de distribuidores
+* Middleware de autenticação
+* Banco de dados MongoDB utilizando Mongoose
+* Testes automatizados com Jest e Supertest
+* Documentação pronta para Postman ou Insomnia
 
-Controle de permissões por papel (cliente, vendedor, admin)
+---
 
-Criação e gerenciamento de pedidos
+## Tecnologias Utilizadas
 
-Cadastro e controle de distribuidores
+* Node.js
+* Express
+* MongoDB + Mongoose
+* JWT (JSON Web Token)
+* Bcrypt
+* Dotenv
+* Jest
+* Supertest
 
-Filtros e status de distribuidores
+---
 
-Middleware de autenticação
+## Instalação
 
-Banco de dados MongoDB utilizando Mongoose
+### Instalar dependências
 
-Testes automatizados com Jest e Supertest
-
-Documentação pronta para Postman ou Insomnia
-
-Tecnologias Utilizadas
-
-Node.js
-
-Express
-
-MongoDB + Mongoose
-
-JWT (JSON Web Token)
-
-Bcrypt
-
-Dotenv
-
-Jest
-
-Supertest
-
-Instalação
-Instalar dependências
+```bash
 npm install
+```
 
-Criar arquivo .env
+---
+
+### Criar arquivo `.env`
+
+```env
 PORT=3000
 MONGO_URI=mongodb+srv://SEU_USUARIO:SUA_SENHA@SEU_CLUSTER.mongodb.net/?appName=apimarketplace
 JWT_SECRET=sua_chave_secreta_jwt
+```
 
-Criar arquivo .env.test
+---
+
+### Criar arquivo `.env.test`
+
+```env
 MONGO_URI_TEST=mongodb+srv://SEU_USUARIO:SUA_SENHA@SEU_CLUSTER.mongodb.net/apimarketplace_test
 JWT_SECRET=sua_chave_secreta_jwt
+```
 
-Iniciar o servidor
+---
+
+### Iniciar o servidor
+
+```bash
 npm start
-
+```
 
 Saída esperada:
 
-Servidor rodando na porta 3000
+* Servidor rodando na porta 3000
+* MongoDB conectado
 
-MongoDB conectado
+---
 
-Executar testes automatizados
+### Executar testes automatizados
+
+```bash
 npm test
-
+```
 
 Os testes utilizam:
 
-Banco isolado de testes
+* Banco isolado de testes
+* Criação automática de usuários, produtos, pedidos e distribuidores
 
-Criação automática de usuários, produtos, pedidos e distribuidores
+---
 
-Rotas da API
+## Rotas da API
 
 Base URL:
 
+```
 http://localhost:3000
+```
 
-Autenticação (AUTH)
-Registrar usuário
+---
 
-POST /users/register
+# Autenticação (AUTH)
 
+### Registrar usuário
+
+**POST** `/users/register`
+
+```json
 {
   "nome": "João",
   "email": "joao@email.com",
   "senha": "123456",
   "role": "cliente"
 }
+```
 
+**Roles disponíveis:**
 
-Roles disponíveis:
+* cliente
+* vendedor
+* admin
 
-cliente
+---
 
-vendedor
+### Login
 
-admin
+**POST** `/auth/login`
 
-Login
-
-POST /auth/login
-
+```json
 {
   "email": "joao@email.com",
   "senha": "123456"
 }
-
+```
 
 Resposta:
 
+```json
 {
   "token": "jwt.token.aqui"
 }
+```
 
-Enviar token nas rotas protegidas
+---
+
+### Enviar token nas rotas protegidas
+
+```http
 Authorization: Bearer SEU_TOKEN_AQUI
+```
 
-Produtos (Products)
-Listar produtos
+---
 
-GET /products
+# Produtos (Products)
 
-Criar produto
+### Listar produtos
 
-POST /products
-Requer autenticação (vendedor ou admin)
+**GET** `/products`
 
+---
+
+### Criar produto
+
+**POST** `/products`
+Requer autenticação (**vendedor ou admin**)
+
+```json
 {
   "nome": "Notebook Gamer",
   "descricao": "RTX 4060, i7",
   "preco": 5999.90,
   "estoque": 10
 }
+```
 
-Atualizar produto
+---
 
-PUT /products/:id
+### Atualizar produto
+
+**PUT** `/products/:id`
 Apenas o criador do produto ou admin
 
-Remover produto
+---
 
-DELETE /products/:id
+### Remover produto
+
+**DELETE** `/products/:id`
 Apenas o criador do produto ou admin
 
-Pedidos (Orders)
-Criar pedido
+---
 
-POST /orders
+# Pedidos (Orders)
+
+### Criar pedido
+
+**POST** `/orders`
 Requer autenticação
 
+```json
 {
   "items": [
     {
@@ -163,28 +205,43 @@ Requer autenticação
     }
   ]
 }
+```
 
-Listar pedidos
+---
 
-GET /orders
+### Listar pedidos
 
-Buscar pedido por ID
+**GET** `/orders`
 
-GET /orders/:id
+---
 
-Atualizar pedido
+### Buscar pedido por ID
 
-PUT /orders/:id
+**GET** `/orders/:id`
 
-Remover pedido
+---
 
-DELETE /orders/:id
+### Atualizar pedido
 
-Distribuidores (Distributors)
+**PUT** `/orders/:id`
+
+---
+
+### Remover pedido
+
+**DELETE** `/orders/:id`
+
+---
+
+# Distribuidores (Distributors)
 
 Distribuidores representam empresas fornecedoras cadastradas no sistema.
 
-Estrutura do Distribuidor
+---
+
+## Estrutura do Distribuidor
+
+```json
 {
   "razaoSocial": "Distribuidora Exemplo LTDA",
   "nomeFantasia": "Distribuidora Exemplo",
@@ -202,16 +259,22 @@ Estrutura do Distribuidor
   },
   "responsavel": "Maria Silva"
 }
+```
 
-Listar distribuidores públicos (ativos)
+---
 
-GET /distributors/public
+### Listar distribuidores públicos (ativos)
 
-Cadastrar distribuidor
+**GET** `/distributors/public`
 
-POST /distributors
+---
+
+### Cadastrar distribuidor
+
+**POST** `/distributors`
 Requer autenticação
 
+```json
 {
   "razaoSocial": "Distribuidora Exemplo LTDA",
   "nomeFantasia": "Distribuidora Exemplo",
@@ -228,48 +291,59 @@ Requer autenticação
   },
   "responsavel": "Maria Silva"
 }
+```
 
-Listar distribuidores (com filtros)
+---
 
-GET /distributors
+### Listar distribuidores (com filtros)
+
+**GET** `/distributors`
 
 Parâmetros opcionais:
 
-ativo=true|false
+* `ativo=true|false`
+* `cidade=São Paulo`
+* `estado=SP`
 
-cidade=São Paulo
+---
 
-estado=SP
+### Buscar distribuidor por ID
 
-Buscar distribuidor por ID
+**GET** `/distributors/:id`
 
-GET /distributors/:id
+---
 
-Buscar distribuidor por CNPJ
+### Buscar distribuidor por CNPJ
 
-GET /distributors/cnpj/:cnpj
+**GET** `/distributors/cnpj/:cnpj`
 
-Atualizar distribuidor
+---
 
-PUT /distributors/:id
-Apenas admin ou quem cadastrou
+### Atualizar distribuidor
 
-Ativar / Desativar distribuidor
+**PUT** `/distributors/:id`
+Apenas **admin** ou **quem cadastrou**
 
-PATCH /distributors/:id/status
-Apenas admin ou quem cadastrou
+---
 
-Remover distribuidor
+### Ativar / Desativar distribuidor
 
-DELETE /distributors/:id
-Apenas admin
+**PATCH** `/distributors/:id/status`
+Apenas **admin** ou **quem cadastrou**
 
-Observações Finais
+---
 
-Tokens JWT são obrigatórios para rotas protegidas
+### Remover distribuidor
 
-CNPJ é validado automaticamente
+**DELETE** `/distributors/:id`
+Apenas **admin**
 
-Banco de testes é limpo após execução dos testes
+---
 
-Projeto preparado para expansão futura
+## Observações Finais
+
+* Tokens JWT são obrigatórios para rotas protegidas
+* CNPJ é validado automaticamente
+* Banco de testes é limpo após execução dos testes
+* Projeto preparado para expansão futura
+
