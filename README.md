@@ -1,23 +1,25 @@
-# API Marketplace – Documentação
+Documentação Oficial
 
-## Descrição
+## Visão Geral
 
-Esta API oferece funcionalidades completas para gerenciamento de usuários, produtos, pedidos e distribuidores, incluindo autenticação com JWT, controle de permissões e integração com MongoDB via Mongoose.
+A **API** é uma aplicação backend desenvolvida em Node.js para gerenciamento de um marketplace, oferecendo recursos completos de autenticação, controle de usuários, produtos, pedidos e fornecedores.
+O sistema utiliza **JWT para segurança**, **MongoDB como banco de dados** e segue boas práticas de arquitetura REST.
 
 ---
 
-## Funcionalidades Principais
+## Recursos Principais
 
-* Cadastro e login de usuários (JWT)
-* CRUD completo de produtos
-* Controle de permissões por papel (cliente, vendedor, admin)
-* Criação e gerenciamento de pedidos
-* Cadastro e controle de distribuidores
-* Filtros e status de distribuidores
-* Middleware de autenticação
-* Banco de dados MongoDB utilizando Mongoose
-* Testes automatizados com Jest e Supertest
-* Documentação pronta para Postman ou Insomnia
+* Autenticação e cadastro de usuários com JWT
+* Controle de acesso por perfil (cliente, vendedor e administrador)
+* Gerenciamento completo de produtos (CRUD)
+* Criação e acompanhamento de pedidos
+* Cálculo automático do valor total do pedido
+* Cadastro e controle de fornecedores (distribuidores)
+* Filtros avançados para listagem de fornecedores
+* Middleware de autenticação e autorização
+* Integração com MongoDB via Mongoose
+* Testes automatizados
+* Estrutura preparada para expansão futura
 
 ---
 
@@ -25,7 +27,8 @@ Esta API oferece funcionalidades completas para gerenciamento de usuários, prod
 
 * Node.js
 * Express
-* MongoDB + Mongoose
+* MongoDB
+* Mongoose
 * JWT (JSON Web Token)
 * Bcrypt
 * Dotenv
@@ -34,9 +37,9 @@ Esta API oferece funcionalidades completas para gerenciamento de usuários, prod
 
 ---
 
-## Instalação
+## Instalação do Projeto
 
-### Instalar dependências
+### 1. Instalar dependências
 
 ```bash
 npm install
@@ -44,26 +47,30 @@ npm install
 
 ---
 
-### Criar arquivo `.env`
+### 2. Configurar variáveis de ambiente
+
+Crie o arquivo `.env` na raiz do projeto:
 
 ```env
 PORT=3000
-MONGO_URI=mongodb+srv://SEU_USUARIO:SUA_SENHA@SEU_CLUSTER.mongodb.net/?appName=apimarketplace
-JWT_SECRET=sua_chave_secreta_jwt
+MONGO_URI=mongodb+srv://USUARIO:SENHA@CLUSTER.mongodb.net/commercehub
+JWT_SECRET=chave_secreta_jwt
 ```
 
 ---
 
-### Criar arquivo `.env.test`
+### 3. Configurar ambiente de testes
+
+Crie o arquivo `.env.test`:
 
 ```env
-MONGO_URI_TEST=mongodb+srv://SEU_USUARIO:SUA_SENHA@SEU_CLUSTER.mongodb.net/apimarketplace_test
-JWT_SECRET=sua_chave_secreta_jwt
+MONGO_URI_TEST=mongodb+srv://USUARIO:SENHA@CLUSTER.mongodb.net/commercehub_test
+JWT_SECRET=chave_secreta_jwt
 ```
 
 ---
 
-### Iniciar o servidor
+### 4. Iniciar o servidor
 
 ```bash
 npm start
@@ -71,27 +78,22 @@ npm start
 
 Saída esperada:
 
-* Servidor rodando na porta 3000
-* MongoDB conectado
+* Servidor ativo na porta configurada
+* Conexão com MongoDB estabelecida
 
 ---
 
-### Executar testes automatizados
+### 5. Executar testes automatizados
 
 ```bash
 npm test
 ```
 
-Os testes utilizam:
-
-* Banco isolado de testes
-* Criação automática de usuários, produtos, pedidos e distribuidores
+Os testes utilizam um banco isolado e não afetam os dados reais.
 
 ---
 
-## Rotas da API
-
-Base URL:
+## Endereço Base da API
 
 ```
 http://localhost:3000
@@ -99,22 +101,22 @@ http://localhost:3000
 
 ---
 
-# Autenticação (AUTH)
+# Autenticação e Usuários
 
-### Registrar usuário
+## Registrar novo usuário
 
 **POST** `/users/register`
 
 ```json
 {
-  "nome": "João",
-  "email": "joao@email.com",
+  "nome": "Carlos Silva",
+  "email": "carlos@email.com",
   "senha": "123456",
   "role": "cliente"
 }
 ```
 
-**Roles disponíveis:**
+### Perfis disponíveis
 
 * cliente
 * vendedor
@@ -122,13 +124,13 @@ http://localhost:3000
 
 ---
 
-### Login
+## Login
 
 **POST** `/auth/login`
 
 ```json
 {
-  "email": "joao@email.com",
+  "email": "carlos@email.com",
   "senha": "123456"
 }
 ```
@@ -143,7 +145,9 @@ Resposta:
 
 ---
 
-### Enviar token nas rotas protegidas
+## Uso do Token
+
+Para acessar rotas protegidas, envie o token no header:
 
 ```http
 Authorization: Bearer SEU_TOKEN_AQUI
@@ -151,56 +155,59 @@ Authorization: Bearer SEU_TOKEN_AQUI
 
 ---
 
-# Produtos (Products)
+# Produtos
 
-### Listar produtos
+## Listar produtos
 
 **GET** `/products`
 
 ---
 
-### Criar produto
+## Criar produto
 
 **POST** `/products`
 Requer autenticação (**vendedor ou admin**)
 
 ```json
 {
-  "nome": "Notebook Gamer",
-  "descricao": "RTX 4060, i7",
-  "preco": 5999.90,
-  "estoque": 10
+  "nome": "Smartphone Pro",
+  "descricao": "128GB, câmera avançada",
+  "preco": 3499.90,
+  "estoque": 15
 }
 ```
 
 ---
 
-### Atualizar produto
+## Atualizar produto
 
 **PUT** `/products/:id`
-Apenas o criador do produto ou admin
+Permitido apenas para o criador do produto ou administrador.
 
 ---
 
-### Remover produto
+## Excluir produto
 
 **DELETE** `/products/:id`
-Apenas o criador do produto ou admin
+Permitido apenas para o criador do produto ou administrador.
 
 ---
 
-# Pedidos (Orders)
+# Pedidos
 
-### Criar pedido
+## Criar pedido
 
 **POST** `/orders`
-Requer autenticação
+Requer autenticação.
+
+O valor total é **calculado automaticamente no backend** com base no preço dos produtos.
 
 ```json
 {
-  "items": [
+  "usuario": "ID_DO_USUARIO",
+  "itens": [
     {
-      "product": "ID_DO_PRODUTO",
+      "produto": "ID_DO_PRODUTO",
       "quantidade": 2
     }
   ]
@@ -209,93 +216,73 @@ Requer autenticação
 
 ---
 
-### Listar pedidos
+## Listar pedidos
 
 **GET** `/orders`
 
 ---
 
-### Buscar pedido por ID
+## Buscar pedido por ID
 
 **GET** `/orders/:id`
 
 ---
 
-### Atualizar pedido
+## Atualizar pedido
 
 **PUT** `/orders/:id`
 
 ---
 
-### Remover pedido
+## Remover pedido
 
 **DELETE** `/orders/:id`
 
 ---
 
-# Distribuidores (Distributors)
+# Fornecedores (Distribuidores)
 
-Distribuidores representam empresas fornecedoras cadastradas no sistema.
+Fornecedores representam empresas responsáveis pelo fornecimento de produtos no sistema.
 
 ---
 
-## Estrutura do Distribuidor
+## Estrutura do Fornecedor
 
 ```json
 {
-  "razaoSocial": "Distribuidora Exemplo LTDA",
-  "nomeFantasia": "Distribuidora Exemplo",
+  "razaoSocial": "Tech Supplies LTDA",
+  "nomeFantasia": "Tech Supplies",
   "cnpj": "12345678000199",
-  "email": "contato@distribuidora.com",
-  "telefone": "(11) 99999-9999",
+  "email": "contato@techsupplies.com",
+  "telefone": "(11) 98888-7777",
   "endereco": {
-    "logradouro": "Rua das Flores",
-    "numero": "123",
-    "complemento": "Sala 5",
+    "logradouro": "Av. Central",
+    "numero": "500",
     "bairro": "Centro",
     "cidade": "São Paulo",
     "estado": "SP",
     "cep": "01000-000"
   },
-  "responsavel": "Maria Silva"
+  "responsavel": "Ana Pereira"
 }
 ```
 
 ---
 
-### Listar distribuidores públicos (ativos)
+## Listar fornecedores ativos (público)
 
 **GET** `/distributors/public`
 
 ---
 
-### Cadastrar distribuidor
+## Cadastrar fornecedor
 
 **POST** `/distributors`
-Requer autenticação
-
-```json
-{
-  "razaoSocial": "Distribuidora Exemplo LTDA",
-  "nomeFantasia": "Distribuidora Exemplo",
-  "cnpj": "12.345.678/0001-99",
-  "email": "contato@distribuidora.com",
-  "telefone": "(11) 99999-9999",
-  "endereco": {
-    "logradouro": "Rua A",
-    "numero": "100",
-    "bairro": "Centro",
-    "cidade": "São Paulo",
-    "estado": "SP",
-    "cep": "01000-000"
-  },
-  "responsavel": "Maria Silva"
-}
-```
+Requer autenticação.
 
 ---
 
-### Listar distribuidores (com filtros)
+## Listar fornecedores com filtros
 
 **GET** `/distributors`
 
@@ -307,43 +294,42 @@ Parâmetros opcionais:
 
 ---
 
-### Buscar distribuidor por ID
+## Buscar fornecedor por ID
 
 **GET** `/distributors/:id`
 
 ---
 
-### Buscar distribuidor por CNPJ
+## Buscar fornecedor por CNPJ
 
 **GET** `/distributors/cnpj/:cnpj`
 
 ---
 
-### Atualizar distribuidor
+## Atualizar fornecedor
 
 **PUT** `/distributors/:id`
-Apenas **admin** ou **quem cadastrou**
+Permitido para administrador ou usuário que cadastrou.
 
 ---
 
-### Ativar / Desativar distribuidor
+## Ativar ou desativar fornecedor
 
 **PATCH** `/distributors/:id/status`
-Apenas **admin** ou **quem cadastrou**
+Permitido para administrador ou usuário responsável.
 
 ---
 
-### Remover distribuidor
+## Remover fornecedor
 
 **DELETE** `/distributors/:id`
-Apenas **admin**
+Apenas administrador.
 
 ---
 
-## Observações Finais
+## Considerações Finais
 
-* Tokens JWT são obrigatórios para rotas protegidas
-* CNPJ é validado automaticamente
-* Banco de testes é limpo após execução dos testes
-* Projeto preparado para expansão futura
-
+* Todas as rotas protegidas exigem autenticação via JWT
+* O total do pedido é sempre calculado no servidor
+* Os testes utilizam banco de dados isolado
+* Estrutura preparada para novas funcionalidades e escalabilidade
